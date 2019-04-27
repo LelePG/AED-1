@@ -17,8 +17,7 @@ void mostra_pessoa(void);
 void arruma_ponteiros(void* pBuffer);//coloca os ponteiros no lugar
 void verifica(void* pBuffer);//verifica alocaçao
 void p_final(void);//coloca p no fim do buffer
-
-//ordenaçao por idade
+//ordenaçao por nome
 void ordena_insertion(void);
 void ordena_bubble(void);
 void ordena_selection(void);
@@ -69,7 +68,6 @@ int main(){
    }
 
 }
-
 
 
 void menu (int *op){//OK
@@ -148,7 +146,7 @@ void remove_pessoa(void){//PROBLEMA no realloc
        }
     p++;
     }
-    printf("Name not found");
+    printf("----Pessoa nao encontrada----");
 }
 void mostra_pessoa(void){//OK
     printf("Digite o nome da pessoa que vc quer ver os dados: ");
@@ -166,13 +164,13 @@ void mostra_pessoa(void){//OK
     }
     printf("----Pessoa nao encontrada-----\n");
 }
-void ordena_insertion(void){//OK, ordena por idade
+void ordena_insertion(void){//OK
 p = p_pos;
-for(*cont =0;*cont<*cont_p-1;(*cont)++){
-    *procura = *(p + (*cont+1));
-    *cont2 = *cont ;
-      while ((*cont2) >= 0 && procura->idade < (p+(*cont2))->idade) {
-        *(p +*cont2+1) = *(p+*cont2);
+for(*cont =0;*cont<*cont_p;(*cont)++){
+    *procura = *(p + (*cont));
+    *cont2 = *cont -1;
+      while ((*cont2) >= 0 && strcmp((p+(*cont2))->nome,procura->nome)>0) {
+        *(p +*cont2+1) = *(p+*cont2);//copio uma pessoa pro lugar da outra, nao precisa strcpy
         (*cont2)--;
       }
 
@@ -180,11 +178,11 @@ for(*cont =0;*cont<*cont_p-1;(*cont)++){
    }
 printf("-----Lista ordenada com insertion sort----\n");
 }
-void ordena_bubble(void){//OK, ordena por idade
+void ordena_bubble(void){//OK
     p=p_pos;
     for(*cont = 0;*cont < *cont_p-1;(*cont)++){
         for(*cont2 = 0;*cont2<*cont_p-1;(*cont2)++){
-            if((p+*cont2)->idade >(p+*cont2+1)->idade){
+            if(strcmp((p+*cont2)->nome,(p+*cont2+1)->nome)>0){
                 *procura = *(p+*cont2+1);
                 *(p+*cont2+1) = *(p+*cont2);
                 *(p+*cont2) = *procura;
@@ -194,13 +192,13 @@ void ordena_bubble(void){//OK, ordena por idade
     printf("-----Lista ordenada com bubble sort----\n");
 
 }
-void ordena_selection(void){//OK ordena por idade
+void ordena_selection(void){//OK
 //posso usar op que seleciona a operaçao aqui dentro como variavel, porque a proxima vez que usar ela vai ser inserindo outro valor
    p=p_pos;
     for(*cont =0;*cont<*cont_p-1;(*cont)++){
         *op = *cont;
         for(*cont2 = (*cont)+1;*cont2<*cont_p;(*cont2)++){
-            if((p+*cont2)->idade <(p+*op)->idade){
+            if(strcmp((p+*cont2)->nome,(p+*op)->nome)<0){
                 *op = *cont2;
             }
         }
@@ -209,6 +207,4 @@ void ordena_selection(void){//OK ordena por idade
     *(p+*cont) = *procura;
     }
 printf("-----Lista ordenada com selection sort----\n");
-
-
 }
