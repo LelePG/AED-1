@@ -17,6 +17,8 @@ void mostra_pessoa(void);
 void arruma_ponteiros(void* pBuffer);//coloca os ponteiros no lugar
 void verifica(void* pBuffer);//verifica alocaçao
 void p_final(void);//coloca p no fim do buffer
+
+//ordenaçao por idade
 void ordena_insertion(void);
 void ordena_bubble(void);
 void ordena_selection(void);
@@ -97,9 +99,9 @@ void arruma_ponteiros(void* pBuffer){//OK
     procura =(pessoa*) op+1;//vou usar como variavel pessoa auxiliar
     p =(pessoa*)procura+1;
 }
-void adiciona_pessoa(void){//OK
+void adiciona_pessoa(void){//Problema no realloc
     *cont_p=*cont_p+1;//atualizo o contador de pessoas
-    pBuffer  = (void*) realloc (pBuffer,4*sizeof(int) +(*cont_p+1)*sizeof(pessoa));//atualizo o tamanho do buffer
+    pBuffer  = (void*) realloc (pBuffer,4*sizeof(int)+sizeof(pessoa) +(*cont_p)*sizeof(pessoa));//atualizo o tamanho do buffer
     verifica(pBuffer);
     arruma_ponteiros(pBuffer);
     p_final();//p tem que ir pro final pra mim adicionar a nova pessoa na ultima posicao
@@ -127,7 +129,7 @@ void imprime_pessoas(void){//OK
         p++;//p vai assumindo os valores que eu preciso apresentar, no final ele para no fim do buffer
     }
 }
-void remove_pessoa(void){//PROBLEMA tava tudo certo antes, agora ta dando problema.
+void remove_pessoa(void){//PROBLEMA no realloc
     printf("Digite quem deseja excluir: ");
     scanf("%[^\n]",procura->nome);
     p =p_pos;//coloco o ponteiro de pessoas no lugar dele
@@ -137,11 +139,10 @@ void remove_pessoa(void){//PROBLEMA tava tudo certo antes, agora ta dando proble
             *p = *(p+1);//puxa todas uma casa pra trás
             p++;//e avança o ponteiro
         }
-
-        pBuffer  = (void*) realloc (pBuffer,4*sizeof(int) + (*cont_p)*sizeof(pessoa));//atualizo o tamanho do buffer
+        *cont_p = *cont_p -1;
+        pBuffer  = (void*) realloc (pBuffer,4*sizeof(int) +sizeof(pessoa)+(*cont_p)*sizeof(pessoa));//atualizo o tamanho do buffer. *cont_p+1 por causa da pessoa auxiliar
         verifica(pBuffer);
         arruma_ponteiros(pBuffer);
-        *cont_p = *cont_p -1;//arruma o contador de pessoas
         printf("-- %s EXCLUÍDO --\n",procura->nome);
         return;
        }
@@ -165,7 +166,7 @@ void mostra_pessoa(void){//OK
     }
     printf("----Pessoa nao encontrada-----\n");
 }
-void ordena_insertion(void){//OK, ordena pela idade
+void ordena_insertion(void){//OK, ordena por idade
 p = p_pos;
 for(*cont =0;*cont<*cont_p-1;(*cont)++){
     *procura = *(p + (*cont+1));
@@ -177,12 +178,37 @@ for(*cont =0;*cont<*cont_p-1;(*cont)++){
 
       *(p+1+*cont2) = *procura;
    }
-printf("-----Lista ordenada----\n");
+printf("-----Lista ordenada com insertion sort----\n");
 }
-void ordena_bubble(void){//FAZER
-printf("bubble sort");
-}
-void ordena_selection(void){//FAZER
-printf("selection sort");
-}
+void ordena_bubble(void){//OK, ordena por idade
+    p=p_pos;
+    for(*cont = 0;*cont < *cont_p-1;(*cont)++){
+        for(*cont2 = 0;*cont2<*cont_p-1;(*cont2)++){
+            if((p+*cont2)->idade >(p+*cont2+1)->idade){
+                *procura = *(p+*cont2+1);
+                *(p+*cont2+1) = *(p+*cont2);
+                *(p+*cont2) = *procura;
+            }
+        }
+    }
+    printf("-----Lista ordenada com bubble sort----\n");
 
+}
+void ordena_selection(void){//OK ordena por idade
+//posso usar op que seleciona a operaçao aqui dentro como variavel, porque a proxima vez que usar ela vai ser inserindo outro valor
+   p=p_pos;
+    for(*cont =0;*cont<*cont_p-1;(*cont)++){
+        *op = *cont;
+        for(*cont2 = (*cont)+1;*cont2<*cont_p;(*cont2)++){
+            if((p+*cont2)->idade <(p+*op)->idade){
+                *op = *cont2;
+            }
+        }
+    *procura =*(p+*op);
+    *(p+*op) = *(p+*cont);
+    *(p+*cont) = *procura;
+    }
+printf("-----Lista ordenada com selection sort----\n");
+
+
+}
