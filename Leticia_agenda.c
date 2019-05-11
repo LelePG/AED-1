@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +22,8 @@ void p_final(void);//coloca p no fim do buffer
 void ordena_insertion(void);
 void ordena_bubble(void);
 void ordena_selection(void);
-
+void ordena_merge(void);
+void ordena_quick(void);
 
 void *pBuffer;
 int *cont,*cont2,*cont_p,*op;
@@ -45,19 +47,25 @@ int main(){
         	case 3:
         		imprime_pessoas();
         		break;
-            case 4:
-                mostra_pessoa();
-                break;
-            case 5:
+         case 4:
+            mostra_pessoa();
+            break;
+         case 5:
         		ordena_insertion();
-        		break;
-            case 6:
-                ordena_bubble();
-                break;
-        	case 7:
+       		break;
+         case 6:
+            ordena_bubble();
+            break;
+         case 7:
         		ordena_selection();
         		break;
-        	case 8:
+         case 8:
+            ordena_merge();
+            break;
+        	case 9:
+        		ordena_quick();
+        		break;
+        	case 10:
         		free(pBuffer);
         		return 0;
         	default:
@@ -79,13 +87,15 @@ printf("4- Imprimir pessoa\n");
 printf("5- Ordena com Insertion Sort\n");
 printf("6- Ordena com Bubble Sort\n");
 printf("7- Ordena com Selection Sort\n");
-printf("8- Sair\n");
+printf("8- Ordena com Merge Sort\n");
+printf("9- Ordena com Quick Sort\n");
+printf("10- Sair\n");
 scanf("%d",op);
 getchar();// tira o barra n
 }
 void verifica(void* buffer){//OK
 if(buffer==NULL){
-		printf("ERRO! Saindo do programa.\n");
+		printf("----ERRO! SAINDO DO PROGRAMA.----\n");
 		exit(1);
 	}
 }
@@ -97,9 +107,10 @@ void arruma_ponteiros(void* pBuffer){//OK
     procura =(pessoa*) op+1;//vou usar como variavel pessoa auxiliar
     p =(pessoa*)procura+1;
 }
-void adiciona_pessoa(void){//Problema no realloc
+void adiciona_pessoa(void){//OK
     *cont_p=*cont_p+1;//atualizo o contador de pessoas
     pBuffer  = (void*) realloc (pBuffer,4*sizeof(int)+sizeof(pessoa) +(*cont_p)*sizeof(pessoa));//atualizo o tamanho do buffer
+    //Por algum motivo preciso sempre que eu for usar o cont_p no realloc preciso usar o tamanho de cont_p+1 ou dá erro.
     verifica(pBuffer);
     arruma_ponteiros(pBuffer);
     p_final();//p tem que ir pro final pra mim adicionar a nova pessoa na ultima posicao
@@ -120,14 +131,14 @@ void p_final(void){//OK
 void imprime_pessoas(void){//OK
     p = p_pos;//coloca p na posição original dele pra ir avançando pelo buffer
     for(*cont =0;*cont<*cont_p;*cont=(*cont)+1){
-        printf("--PESSOA %d--\n",*cont+1);//Pessoa 1,2,3...
+        printf("---PESSOA %d---\n",*cont+1);//Pessoa 1,2,3...
         printf("Nome: %s\n",p->nome);
         printf("Idade: %d\n",p->idade);
         printf("Telefone : %d\n",p->telefone);
         p++;//p vai assumindo os valores que eu preciso apresentar, no final ele para no fim do buffer
     }
 }
-void remove_pessoa(void){//PROBLEMA no realloc
+void remove_pessoa(void){//OK
     printf("Digite quem deseja excluir: ");
     scanf("%[^\n]",procura->nome);
     p =p_pos;//coloco o ponteiro de pessoas no lugar dele
@@ -137,8 +148,9 @@ void remove_pessoa(void){//PROBLEMA no realloc
             *p = *(p+1);//puxa todas uma casa pra trás
             p++;//e avança o ponteiro
         }
+        pBuffer  = (void*) realloc (pBuffer,4*sizeof(int) +sizeof(pessoa)+(*cont_p)*sizeof(pessoa));//atualizo o tamanho do buffer.
+        //Por algum motivo preciso sempre que eu for usar o cont_p no realloc preciso usar o tamanho de cont_p+1 ou dá erro, por isso decremento depois.
         *cont_p = *cont_p -1;
-        pBuffer  = (void*) realloc (pBuffer,4*sizeof(int) +sizeof(pessoa)+(*cont_p)*sizeof(pessoa));//atualizo o tamanho do buffer. *cont_p+1 por causa da pessoa auxiliar
         verifica(pBuffer);
         arruma_ponteiros(pBuffer);
         printf("-- %s EXCLUÍDO --\n",procura->nome);
@@ -146,7 +158,7 @@ void remove_pessoa(void){//PROBLEMA no realloc
        }
     p++;
     }
-    printf("----Pessoa nao encontrada----");
+    printf("----PESSOA NÃO ENCONTRADA----");
 }
 void mostra_pessoa(void){//OK
     printf("Digite o nome da pessoa que vc quer ver os dados: ");
@@ -154,7 +166,7 @@ void mostra_pessoa(void){//OK
     p =p_pos;//coloco o ponteiro de pessoas no lugar dele
     for(*cont =0;*cont<*cont_p;*cont=(*cont)+1){//procura pelo buffer
         if(strcmp(p->nome,procura->nome)==0){//se achou
-            printf("----Pessoa encontrada-----\n");
+            printf("----PESSOA ENCONTRADA-----\n");
             printf("Nome : %s\n",p->nome);
             printf("Idade : %d\n",p->idade);
             printf("Telefone: %d\n",p->telefone);
@@ -162,7 +174,7 @@ void mostra_pessoa(void){//OK
         }
     p++;
     }
-    printf("----Pessoa nao encontrada-----\n");
+    printf("----PESSOA NÃO ENCONTRADA-----\n");
 }
 void ordena_insertion(void){//OK
 p = p_pos;
@@ -176,7 +188,7 @@ for(*cont =0;*cont<*cont_p;(*cont)++){
 
       *(p+1+*cont2) = *procura;
    }
-printf("-----Lista ordenada com insertion sort----\n");
+printf("-----LISTA ORDENADA COM INSERTION SORT-----\n");
 }
 void ordena_bubble(void){//OK
     p=p_pos;
@@ -189,7 +201,7 @@ void ordena_bubble(void){//OK
             }
         }
     }
-    printf("-----Lista ordenada com bubble sort----\n");
+    printf("-----LISTA ORDENADA COM BUBBLE SORT-----\n");;
 
 }
 void ordena_selection(void){//OK
@@ -206,5 +218,13 @@ void ordena_selection(void){//OK
     *(p+*op) = *(p+*cont);
     *(p+*cont) = *procura;
     }
-printf("-----Lista ordenada com selection sort----\n");
+printf("-----LISTA ORDENADA COM SELECTION SORT-----\n");
 }
+
+void ordena_merge(void){//FAZER
+printf("-----LISTA ORDENADA COM MERGE SORT-----\n");
+}
+void ordena_quick(void){//FAZER
+printf("-----LISTA ORDENADA COM QUICK SORT-----\n");
+}
+
