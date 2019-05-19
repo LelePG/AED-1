@@ -2,8 +2,6 @@
 #include<string.h>
 #include<stdlib.h>
 void insere(char** s,char* nome);
-void aloca(char **s);
-
 int n, adicionados =0;
 int main(int argc, char const *argv[])
 {
