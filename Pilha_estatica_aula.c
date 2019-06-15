@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include<stdlib.h>
-#define MAX 5
+#define MAX 50
 
 #define bool int
 #define true 1
@@ -17,11 +17,11 @@ typedef struct stack{
 	Pessoa pessoas[MAX];
 	int top;
 	int bottom;
-	int devide;
 }stack;
 
 int menu(void);
 void pop(stack *s,Pessoa *p);
+void pop_name(stack *s, char* str);
 bool push(stack *s, Pessoa *p);
 bool full(stack *s);
 bool empty(stack *s);
@@ -29,6 +29,7 @@ void reset(stack *s);
 void listar(stack *s);
 int main(){
 	int choice;
+	char nome[20];
 	stack *S;
 	Pessoa aux;
 	S = (stack *) malloc (sizeof(stack));
@@ -51,7 +52,9 @@ int main(){
                 pop(S,&aux);
 				break;
 			case 2:
-                //deletar por nome
+				printf("Qual nome deseja remover? \n");
+				scanf("%s", nome);
+                pop_name(S,nome);
 				break;
 			case 3:
                 while(!empty(S)){
@@ -95,7 +98,6 @@ int menu(void){
 void reset(stack *s){
     s->top = 0;
     s->bottom = 0;
-    s->devide = MAX;
 }
 
 bool empty(stack *s){
@@ -145,3 +147,30 @@ Pessoa aux;
     }
 }
 
+void pop_name(stack *s, char* str){
+	if(!empty(s)){
+		stack *aux;
+		Pessoa p;
+		aux = (stack*) malloc (sizeof(stack));
+		while(!empty(s)){
+			pop(s,&p);
+			if(strcmp(p.nome,str)==0){//achei a igual
+				while(!empty(aux)){//simplesmente sobreescrevi ela e passei tudo que eu tava tirando de volta pro lugar
+					pop(aux,&p);
+					push(s,&p);
+				}
+				return;
+			}
+			push(aux,&p);
+		}
+
+		printf("--ERROR NAME DOES NOT EXIST--\n");
+		while(!empty(aux)){
+			pop(aux,&p);
+			push(s,&p);
+		}
+		free (aux);
+		
+
+	}
+}
